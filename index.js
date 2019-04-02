@@ -16,7 +16,7 @@ client.query({
             departureAirportFsCode,
             departureDate{dateLocal},
             arrivalDate{dateLocal},
-            flightAirportResources{
+            airportResources{
                 arrivalTerminal,
                 arrivalGate
             }
@@ -32,15 +32,26 @@ client.query({
 
     for(var i = 0; i < dataArray.length; i++)
     {
-        $("#tblFlights").append("<tr id=" + dataArray[i].flightId + "><td>" +
-        dataArray[i].flightNumber + "</td><td>" +
-        dataArray[i].departureAirportFsCode + "</td><td>" +
-        mom(dataArray[i].departureDate.dateLocal).format("hh:mm a") + "</td><td>" +  
-        mom(dataArray[i].arrivalDate.dateLocal).format("hh:mm a") + "</td><td>"  + "TERMINAL GATE" + "</td><td>" +
-        dataArray[i].status + "</td></tr>");
+        const flight = dataArray[i];
+        const flightNumber = flight.flightNumber;
+        const departureStation = flight.departureAirportFsCode;
+        const departureTime = mom(flight.departureDate.dateLocal).format("hh:mm a");
+        const arrivalTime = mom(flight.arrivalDate.dateLocal).format("hh:mm a");
+        const arrivalTerminal = flight.airportResources && flight.airportResources.arrivalTerminal || " ";
+        const arrivalGate = flight.airportResources && flight.airportResources.arrivalGate || " ";
+        const status = flight.status;
+
+        $("#tblFlights").append("<tr id=" + flight.flightId + "><td>" +
+        flightNumber + "</td><td>" +
+        departureStation + "</td><td>" +
+        departureTime + "</td><td>" +  
+        arrivalTime + "</td><td>"  +
+        arrivalTerminal + " " + arrivalGate + "</td><td>" +
+        status + "</td></tr>");
     }
 
     console.log('FLIGHTS DATA BUILT');
+    
 }
 
 /*
