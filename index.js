@@ -11,19 +11,20 @@ client.query({
     query: gql
     `{
         getFlightsArrivingToday{
-            flightId,
-            flightNumber,
-            departureAirportFsCode,
-            departureDate{dateLocal},
-            arrivalDate{dateLocal},
+            flightId
+            flightNumber
+            departureAirport{iata}
+            departureDate{dateLocal}
+            arrivalDate{dateLocal}
             airportResources{
-                arrivalTerminal,
+                arrivalTerminal
                 arrivalGate
             }
             status
        } 
     }`
   }).then(result => BuildFlights(result)).catch(error => console.error(error));
+
 
   function BuildFlights(data) {
     console.log('BUILD FLIGHTS DATA');
@@ -34,25 +35,37 @@ client.query({
     {
         const flight = dataArray[i];
         const flightNumber = flight.flightNumber;
-        const departureStation = flight.departureAirportFsCode;
+        const departureStation = flight.departureAirport.iata;
         const departureTime = mom(flight.departureDate.dateLocal).format("hh:mm a");
         const arrivalTime = mom(flight.arrivalDate.dateLocal).format("hh:mm a");
         const arrivalTerminal = flight.airportResources && flight.airportResources.arrivalTerminal || " ";
         const arrivalGate = flight.airportResources && flight.airportResources.arrivalGate || " ";
-        const status = flight.status;
+        const status = hashtable[flight.status];
 
         $("#tblFlights").append("<tr id=" + flight.flightId + "><td>" +
         flightNumber + "</td><td>" +
         departureStation + "</td><td>" +
         departureTime + "</td><td>" +  
         arrivalTime + "</td><td>"  +
-        arrivalTerminal + " " + arrivalGate + "</td><td>" +
+        arrivalTerminal + " " + 
+        arrivalGate + "</td><td>" +
         status + "</td></tr>");
     }
 
     console.log('FLIGHTS DATA BUILT');
     
 }
+
+var hashtable = {};
+hashtable['A'] = 'Active';
+hashtable['C'] = 'Cancelled';
+hashtable['D'] = 'Diverted';
+hashtable['DN'] = 'Data Source Needed';
+hashtable['L'] = 'Not Operational';
+hashtable['R'] = 'Redirected';
+hashtable['S'] = 'Scheduled';
+hashtable['U'] = 'Unknown';
+
 
 /*
 //this asks for data from the server to build out the data table
