@@ -17,8 +17,8 @@ function startConnection(connection) {
 }
 
 function getConnectionInfo() {
-    console.log('Get SignalR connection info');
-    return axios.post(`${apiBaseUrl}/api/SignalRInfo`, null, axiosConfig)
+    console.log('Get SignalR connection info');                                             
+    return axios.post(`${apiBaseUrl}/api/SignalRInfo/flights`, null, axiosConfig)          
         .then(function (resp) { return resp.data })
         .catch(function () { return {} })
 }
